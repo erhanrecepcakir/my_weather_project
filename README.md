@@ -1,14 +1,14 @@
-#Forecast Report with DJANGO
+# Forecast Report with DJANGO
 
-Gets forecast report and sends in an email to subscribers mail addresses.
+Gets forecast report and sends in an email to subscribers mail addresses. <br />
 
-Before run the application, please export below virtual environment definitions:
+Before run the application, please export below virtual environment definitions:<br />
 
-1- OpenWeather API Key:
-Get an account from https://openweathermap.org/api
-Export your API key to virtual environment as 'OPENWEATHERMAP_API_KEY'
+1- OpenWeather API Key:<br />
+Get an account from https://openweathermap.org/api <br />
+Export your API key to virtual environment as 'OPENWEATHERMAP_API_KEY'<br />
 
-2- Use a Gmail account for system server mail address:
-Get an Gmail account for your system email address
-Export Gmail mail address name that includes to virtual environment as 'EMAIL_HOST_USER'
-Export Gmail account password to virtual environment as 'EMAIL_HOST_PASSWORD'
+2- Use a Gmail account for system server mail address:<br />
+Get an Gmail account for your system email address<br />
+Export Gmail mail address name that includes to virtual environment as 'EMAIL_HOST_USER'<br />
+Export Gmail account password to virtual environment as 'EMAIL_HOST_PASSWORD'<br />
