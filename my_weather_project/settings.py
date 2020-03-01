@@ -25,7 +25,9 @@ SECRET_KEY = '1dx8nk2mqx+j%z(7=sq*_57kvivyl1f625^b)kvm4yo$a&s2c7'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '192.168.0.13',
+]
 
 
 # Application definition
@@ -131,3 +133,6 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
+
+#Celery Settings
+CELERY_BROKER_URL = 'amqp://localhost//'
