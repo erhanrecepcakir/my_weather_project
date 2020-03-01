@@ -57,6 +57,7 @@ def weatherhome(request):
         subscription = usercitylists[0].subscription
     else:
         cities = []
+        subscription = False
 
     weather_data = []
 
