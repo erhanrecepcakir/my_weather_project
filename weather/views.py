@@ -11,6 +11,8 @@ from django.contrib.auth.decorators import login_required
 
 import os
 
+from .tasks import send_mail_func
+
 @login_required(login_url = "user:login")
 def weatherhome(request):
     api_key = os.environ['OPENWEATHERMAP_API_KEY']
@@ -174,9 +176,20 @@ def subscribetest(request):
             subject = 'Test weather app - Todays Forecast Report'
             html_message = render_to_string('weather/weather_mail.html', context)
             plain_message = strip_tags(html_message)
-            recepient = citylist.user.username,citylist.user.email
-            send_mail(subject, plain_message, EMAIL_HOST_USER, [recepient], html_message=html_message)
+            #recepient = citylist.user.username,citylist.user.email
+            recepient = citylist.user.email
+            #send_mail(subject, plain_message, EMAIL_HOST_USER, [recepient], html_message=html_message)
+            send_mail_func.delay(
+                    {
+                    'subject':subject,
+                    'plain_message':plain_message, 
+                    'email_host_user':EMAIL_HOST_USER,
+                    'recepient_list':[recepient],
+                    'html_message':html_message,
+                }
+            )
 
             #return render(request, 'weather/weather_mail.html', context)
 
-    return redirect('weather:weatherhome')
+    #return redirect('weather:weatherhome')
+    return redirect('index')
