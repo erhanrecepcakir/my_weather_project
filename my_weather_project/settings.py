@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'user',
     'weather',
     'crispy_forms',
+    'django_celery_beat',
 ]
 
 MIDDLEWARE = [
