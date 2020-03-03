@@ -12,3 +12,7 @@ Export your API key to virtual environment as 'OPENWEATHERMAP_API_KEY'<br />
 Get an Gmail account for your system email address<br />
 Export Gmail mail address name that includes to virtual environment as 'EMAIL_HOST_USER'<br />
 Export Gmail account password to virtual environment as 'EMAIL_HOST_PASSWORD'<br />
+
+Celery Implementation: <br />
+To schedule sending forecast report to subscriber list, Django Admin panel should be used.
+"Home - Periodic Tasks" menu includes beat scheduler options.
