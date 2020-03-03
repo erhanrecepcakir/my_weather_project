@@ -2,3 +2,4 @@ django==3.0.2
 requests==2.22.0
 django-crispy-forms==1.8.1
 celery==4.4.0
+django-celery-beat==2.0.0
