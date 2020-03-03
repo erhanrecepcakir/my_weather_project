@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'weather',
     'crispy_forms',
     'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -138,3 +139,4 @@ EMAIL_USE_SSL = False
 #Celery Settings
 CELERY_BROKER_URL = 'amqp://localhost//'
 CELERY_TIMEZONE = TIME_ZONE
+CELERY_RESULT_BACKEND = 'django-db'
