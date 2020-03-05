@@ -23,15 +23,34 @@ What's the weather like for {{user.username.capitalize}}?
                         {% if message %}
                         <div class="notification {{ message_class }}">{{ message }}</div>
                         {% endif %}
-                    </form>
+                    </form>                    
                     <div>
                       <hr>
                       {% if subscription %}
-                        <a href="{% url 'weather:subscription' False %}"> -->Remove from subscription list</a>
+                        <p>Scheduled Time: {{ crontab_schedule.hour }}:{{ crontab_schedule.minute }} </p>
+                        <a href="{% url 'weather:subscription' False %}">Unsubscribe</a>
                       {% else %}
-                        <a href="{% url 'weather:subscription' True %}"> -->Add to subscription list</a>
+                        <p>Schedule to: </p>
+                        <form method="POST" action="{% url 'weather:subscription' True %}">
+                            {% csrf_token %}
+                            <div class="field has-addons">
+                                <div class="control is-expanded">
+                                    {{ subsform.task_time }}
+                                </div>
+                                <div class="control">
+                                    <button type='submit' class="button is-info">
+                                        Subscribe
+                                    </button>
+                                </div>
+                            </div>
+                            {% if message %}
+                            <div class="notification {{ message_class }}">{{ message }}</div>
+                            {% endif %}
+                        </form>                      
+                        <!--<a href="{% url 'weather:subscription' True %}"> Add to subscription list</a> -->
                       {% endif %}
-                      <hr>
+                      <hr>                      
+                      
                       <a href="{% url 'weather:subscribetest' %}" class="btn btn-danger btn-sm active" role="button" aria-pressed="true">
                         {% if request.user.is_superuser %}
                           Test Button: Send mails to subscription list

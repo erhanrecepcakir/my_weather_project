@@ -2,7 +2,7 @@ from celery import shared_task
 from my_weather_project.celery import app
 
 from django.core.mail import send_mail
-from .utils import mail_sender_to_subs
+from .utils import mail_sender_to_subs, send_mail_for_citylists
 
 @shared_task
 def send_mail_func(context):
@@ -20,6 +20,10 @@ def periodic_report_sender_to_subs_list():
     mail_sender_to_subs()
     print('Periodic task is executed!!!')
     
+@app.task(name='configurable_periodic_mail_sender', bind=True)
+def configurable_periodic_mail_sender(self, citylist_id):
+    send_mail_for_citylists(citylist_id)
+    return True
 
 
 
