@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 import os, json, datetime
 from .tasks import send_mail_func, configurable_periodic_mail_sender
 from django_celery_beat.models import CrontabSchedule, PeriodicTask, PeriodicTasks
+from .utils import get_city_weather_data_from_online
 
 
 @login_required(login_url = "user:login")
@@ -80,9 +81,6 @@ def weatherhome(request):
             'icon': r['weather'][0]['icon'],
         }
         weather_data.append(city_weather)
-
-    #print(weather_data)
-
     context = {
         'weather_data'      : weather_data,
         'form'              : form,
@@ -92,8 +90,6 @@ def weatherhome(request):
         'subscription'      : subscription,
         'crontab_schedule'  : crontab_schedule,
     }
-
-    #return render(request, 'weather/weather.html', context)
     return render(request, 'weather/weather.html', context)
 
 def delete_city(request, city_name):
@@ -109,9 +105,7 @@ def extend_city(request, city_name):
     message_class = ''
 
     r = requests.get(url.format(city_name)).json()
-
     weather_data = []
-
     if r['cod'] == '200':
         for list_index in range(r['cnt']):
             city_weather = {
@@ -130,10 +124,7 @@ def extend_city(request, city_name):
         'message' : err_msg,
         'message_class' : message_class,
     }
-
-
     return render(request, 'weather/extended_weather.html', context)
-
 
 def subscription(request, status):
     if 'task_time' in request.POST:
@@ -175,13 +166,6 @@ def subscription(request, status):
     return redirect('weather:weatherhome')
 
 def subscribetest(request):
-    api_key = os.environ['OPENWEATHERMAP_API_KEY']
-    url = 'https://api.openweathermap.org/data/2.5/weather?q={}&units=metric&appid=' + api_key
-
-    err_msg = ''
-    message = ''
-    message_class = ''
-
     if request.user.is_superuser:
         citylists = CityList.objects.all()
     else:
@@ -192,42 +176,27 @@ def subscribetest(request):
         context = {}
 
         if citylist.subscription:
-            context = {}
             for city in citylist.cities.all():
-                r = requests.get(url.format(city)).json()
-                if r['cod'] == 200:
-                    city_weather = {
-                        'city': r['name'],
-                        'temperature': r['main']['temp'],
-                        'description': r['weather'][0]['description'],
-                        'icon': r['weather'][0]['icon'],
-                        'id' : r['id'],
-                    }
+                city_weather = get_city_weather_data_from_online(city)
+                if city_weather:
                     weather_data.append(city_weather)
-            context = {
-                'username'  : citylist.user.username,
-                'weather_data' : weather_data,
-            }
-            # print("UserName: {} UserMail: {}".format(citylist.user.username,citylist.user.email))
-            # print(context)
-
-            subject = 'Test weather app - Todays Forecast Report'
-            html_message = render_to_string('weather/weather_mail.html', context)
-            plain_message = strip_tags(html_message)
-            #recepient = citylist.user.username,citylist.user.email
-            recepient = citylist.user.email
-            #send_mail(subject, plain_message, EMAIL_HOST_USER, [recepient], html_message=html_message)
-            send_mail_func.delay(
-                    {
-                    'subject':subject,
-                    'plain_message':plain_message, 
-                    'email_host_user':EMAIL_HOST_USER,
-                    'recepient_list':[recepient],
-                    'html_message':html_message,
+            if len(weather_data):
+                #weather_data includes at least one city data                    
+                context = {
+                    'username'  : citylist.user.username,
+                    'weather_data' : weather_data,
                 }
-            )
-
-            #return render(request, 'weather/weather_mail.html', context)
-
-    #return redirect('weather:weatherhome')
+                subject = 'Test weather app - Todays Forecast Report'
+                html_message = render_to_string('weather/weather_mail.html', context)
+                plain_message = strip_tags(html_message)
+                recepient = citylist.user.email
+                send_mail_func.delay(
+                        {
+                        'subject':subject,
+                        'plain_message':plain_message, 
+                        'email_host_user':EMAIL_HOST_USER,
+                        'recepient_list':[recepient],
+                        'html_message':html_message,
+                    }
+                )
     return redirect('index')
